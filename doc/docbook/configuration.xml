@@ -1,0 +1,122 @@
+<chapter xml:id="configuration">
+  <title>Configuration</title>
+  <sect1>
+    <title>Quickstart</title>
+    <para>
+      Create the configuration with 
+      <screen> $ <userinput> autoreconf --install </userinput></screen>
+      Configure, compile and create the executable with 
+      <screen> $ <userinput> ./configure &amp; make install </userinput></screen>
+      The executable <command>pangolin</command> is ready to use in the
+      <filename>bin/</filename> directory.
+    </para>
+  </sect1>
+
+  <sect1>
+    <title>Configuring for MPI </title>
+    <para>
+      The configure script will use by default <command>mpif90</command> as a
+      compiler. If you want a different compile, you have to define it with
+      <command>--with-compiler=NAME</command>. Here, the values of
+      <command>NAME</command> are: <command>gfortran</command>,
+      <command>pgf90</command> or <command>ifort</command>.
+    </para>
+
+    <para>
+      If you want to override the search for the compile, you can set the
+      <envar>MPI_DIR</envar> variable.  Then it will use <command>mpif90</command> and
+      <command>mpirun</command> defined in this folder as compiler and script.
+      Example :
+      <screen> $ <userinput> ./configure MPI_DIR=/usr/lib64/openmpi/bin  </userinput></screen>
+      However, you have to set manually the MPI library with
+      <envar>LD_LIBRARY_FLAGS</envar> (see <xref linkend="troubleshoot"/>).
+    </para>
+    <para>
+      Another solution is to add the location of the MPI executables to your <envar>PATH</envar> (see
+      <link linkend="select_mpi">below</link>).
+    </para>
+
+    <sect2 xml:id="select_mpi">
+      <title> How the script select the proper MPI/compiler version </title>
+      <para>
+        If you have supplied a compiler to search, the configure script will
+        find for all MPI compilers. Each one of them will be run with the
+        <command>-show</command> option (so it needs to support it). The result
+        will be compared to <command>ifort</command>, <command>pgf90</command>,
+        <command>gfortran</command>.
+      </para>
+      <para>
+        If no compiler is specified or nothing is found, then we will try
+        default mpi scripts : <command>mpif90</command>and
+        <command>mpiifort</command>. As they cannot be set in the <envar>PATH</envar> (for
+        example if you use module), we check if they exist by running it with
+        the <command>-show</command>option. We stop at the first found. This
+        case is for special configurations where you source a configuration
+        file.
+      </para>
+      <para>
+        You can find quickly all your mpi executables with the command
+        <screen> $ <userinput>locate mpif90 mpiifort</userinput></screen>
+      </para>
+    </sect2>
+  </sect1>
+
+  <sect1 xml:id="hdf5_config">
+    <title>Configuring for HDF5</title>
+    <para>
+      By default, the script search for the HDF5 helper script (namely
+      <command>h5fc</command> or <command>h5pfc</command>).  If they are not in
+      a standard location, the easiest way is to tell the configure script the
+      location of <command>h5fc</command>:
+        <screen> $ <userinput>./configure HDF5_BINDIR=/yourpath/bin</userinput></screen>
+    </para>
+    <para>
+      The script will check we can link to the HDF5 and, if available, to the parallel
+      version of HDF5. We link only to the shared libraires of HDF5, so be sure they
+      are installed !
+      By default, the compilation and link flags are given by:
+      <screen> $ <userinput> h5fc -show -shlib</userinput></screen>
+    </para>
+
+    <sect2>
+      <title>Configuring for neptune</title>
+    <para>
+      On neptune, Pangolin can be configured with parallel HDF5 with an older version:
+      <screen> $ <userinput>./configure HDF5_BINDIR=/softs/HDF5-1.8.0/bin/ --with-compiler=ifort</userinput></screen>
+      or with the latest version, but without parallel support:
+      <screen> $ <userinput>./configure HDF5_BINDIR=/softs/HDF5-1.8.9/bin/ --with-compiler=ifort</userinput></screen>
+    </para>
+    </sect2>
+    <sect2>
+      <title>Custom configuration</title>
+      <para>
+        If you do not want to use the <command>h5fc</command> utiliy, you can
+        specify the HDF5 folder with the <envar>HDF5_DIR</envar> variable. The
+        include and libraries location are then
+        <filename>HDF5_DIR/include</filename> and
+        <filename>HDF5_DIR/lib</filename>.  It also reverts back to default
+        compilation and linking flags, so know what you are doing.
+      </para>
+      <para>
+        You can add compilation flags with <envar>HDF5_FLAGS</envar>. It can be useful to set
+        alternative locations for the HDF5 module files for example. On my machine (Pannus), I
+        use:
+        <screen> $ <userinput> export HDF5_DIR=/usr/lib64/openmpi/ </userinput>
+ $ <userinput> ./configure HDF5_FLAGS=" -I/usr/include/openmpi-x86_64/"</userinput> </screen>
+      </para>
+      <para>
+        This allows me to set the HDF5 directory (containing the libs and executables),
+        while adding a custom path to find the HDF5 fortran module. If you want to
+        search it, try 
+        <screen> $ <userinput> locate hdf5.mod</userinput></screen>
+      </para>
+      <para>
+        If there are several installations of HDF5, I encourage you to search
+        for the file <filename>libhdf5.settings</filename>. It will give you the
+        install configuration: compiler used, if it has shared librairies, if it
+        has parallel support etc.
+      </para>
+    </sect2>
+  </sect1>
+</chapter>
+

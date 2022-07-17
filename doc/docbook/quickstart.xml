@@ -1,0 +1,108 @@
+><chapter>
+  <title>Quickstart</title>
+  <sect1>
+    <title>Running analytical test cases</title>
+    <sect2>
+      <title>ASCII version</title>
+      <para>
+        Pangolin supports the ASCII format to test the model quickly. However, HDF5 is
+        the current recommanded format (see below).
+      </para>
+      <para>
+        First, generate the analytical data. For that, go into the
+        <filename>generate</filename> folder and run
+        <screen>$ <userinput>python main.py</userinput>
+Gaussian hills
+nb lat2 80
+Generating ./ratio_1_201301010000.dat
+Generating ./u_201301010000.dat
+Generating ./v_201301010000.dat
+Correcting ./v_201301010000.dat
+Correcting ./u_201301010000.dat
+Replacing old ascii files</screen>
+        This will generate the tracer data and 2D winds on the Pangolin grid in
+        ASCII. The grid will have 80 latitude on each hemisphere. For more
+        information about the Python script, see <xref linkend="preprocess"/>.
+      </para>
+      <para>
+        Then we can set up the model. Copy this freshly generated data into an
+        appropriate folder:
+        <screen>$ <userinput>mkdir input</userinput>
+$ <userinput>cp generate/*.dat input</userinput></screen>
+        Now create the following configuration file <filename>config</filename>:
+        <programlisting>
+nb_partitions = 9
+nb_lat2 = 80
+t_start = 201301010000
+t_end =   201301010100
+dt=20.
+T_winds =  130000
+T_output = 130000
+
+output_dir = ouput
+output_winds_dir = output
+
+input_dir = input
+input_winds_dir = input </programlisting> 
+        This will create a run of 1 hour with a timestep of 20 minutes. Data will be
+        read in the <filename>input/</filename> directory and written in
+        <filename>output/</filename>. More information about the configuration file 
+        is given in <xref linkend="config_file"/>.
+      </para>
+      <para>
+        Next, we configure and build the model:
+        <screen>$ <userinput>autoreconf --install</userinput>
+$ <userinput>./configure --enable-ascii</userinput>
+$ <userinput>make install</userinput></screen>
+        Reading <xref linkend="requirements"/> is more than recommanded to ensure
+        everything needed is installed. The building process is detailed in 
+        <xref linkend="configuration"/>. If you have any trouble, see
+        <xref linkend="troubleshoot"/>.
+      </para>
+
+      <para>
+        Finally, we run the model with 9 MPI processes:
+        <screen>$ <userinput>./simulation_run.pl --startend=9</userinput>
+Simulation
+Nb partitions = 9
+logfilepangolin.log_6913                                                 
+Warning : Analytical case (for debug)
+Warning : CFL set from timestep
+Nb processes =       9
+Nb partitions =       9
+Warning : Directory ouput does not exist, creating it
+* Reading configuration file config.new done
+* Initializing simulation done
+New global grid with           80 latitudes on an hemisphere
+The last band is not the limiting factor, OK
+Correcting height of            0           0
+Correcting height of            0           0
+nb parts           9 nb procs           9
+Numerical ratio (always)
+Reading ratio (sequential)input/ratio_1_201301010000.dat
+Analytical winds
+skipping merid winds check (partition_class)
+* Partitioning done
+* Starting simulation...
+Run from 2013/01/01 00:00 to 2013/01/01 01:00
+Duration     0.042 days(nb iter=      3, dt=  20.00min, CFL=   0.95605)
+Mass :   3919.0299886725911165  3919.0299886725847500 -0.6366462912410498E-11
+* Simulation done
+* Cleaning...</screen>
+        This step and how to customize it is detailed in <xref linkend="run"/>.
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>HDF5 version</title>
+      <para>
+        The steps are exactly the same, only the configuration step changes:
+        <screen>$ <userinput>./configure</userinput>
+$ <userinput>make install</userinput></screen>
+        Configuring HDF5 can be tricky, so please see <xref linkend="hdf5_config"/> for more details.
+      </para>
+    </sect2>
+  </sect1>
+
+</chapter>
+

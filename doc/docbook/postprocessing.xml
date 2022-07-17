@@ -1,0 +1,79 @@
+<chapter xml:id="postprocess">
+  <title>
+    Postprocessing
+  </title>
+  <sect1>
+    <title>
+      Plotting with NCL
+    </title>
+    TODO
+  </sect1>
+  <sect1>
+    <title>
+      Plotting with matplotlib
+    </title>
+    <para>
+      Matplotlib is only used for ASCII data at the moment. It contains all the
+      needed projections. To run the scripts, you will need :
+      <application>matplotlib</application> (latest),
+      <application>basemap</application> (latest),
+      <application>scipy</application>.
+    </para>
+    <para>
+      Go in the <filename>plot/python</filename> folder.
+      <filename>lib_plot.py</filename> contains all necessary functions.
+      <filename>plot.py</filename> is the part where you can modify the figure
+      title and file name.  For the rest, the command line should be enough :
+      <screen>$ <userinput> python plot.py -p mill -f mydata.dat -i </userinput></screen>
+      Here is a description of the command-line arguments:
+      <variablelist>
+	<varlistentry>
+	  <term>-i</term>
+	  <listitem>
+            this option activates interpolation for contour plotting
+          </listitem>
+        </varlistentry>
+	<varlistentry>
+	  <term>-p mill</term>
+	  <listitem>
+            set a projection (miller, ortho, zoom_ortho, npolar, spolar). If
+            it is not set, the plot will be done on a (lon, lat) plane.
+          </listitem>
+        </varlistentry>
+	<varlistentry>
+	  <term>-f mydata.dat</term>
+	  <listitem>
+            It must be on the format `value lat lon`. Or if it contains winds,
+            `u v lat lon`.
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      Plotting is done with scattered points by default.
+    </para>
+  </sect1>
+
+  <sect1>
+    <title>
+      Plotting with Cairo
+    </title>
+    <para>
+      A small program for fast plotting in the (lon, lat) plane.
+      Go in `plot/cairo` and run :
+      <screen>$ <userinput>./plot_grid mydata.dat output.grid</userinput></screen>
+    </para>
+    <para>
+      Data must contains the cell value and its corners. If you generate data with the
+      python script, you can change the cell format. With the fortran code, you cannot
+      at the moment.
+    </para>
+    <para>
+      If the value is a float, it will be interpreted as the cell ratio and use a
+      colormap. If it is an integer, it will be read as the partition ID and use a
+      custom color scale.
+    </para>
+
+  </sect1>
+
+</chapter>
+
+

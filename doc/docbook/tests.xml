@@ -1,0 +1,272 @@
+<chapter xml:id="tests">
+  <title>Tests</title>
+  <para>
+    First install the test suite with <command>make install</command>. Then you
+    can start unit and/or functional tests. 
+  </para>
+
+  <para>
+    Parallel tests suppose you can start a MPI job with
+    <command>mpirun</command>, so please check you can use
+    <command>mpirun</command>. On clusters like Neptune, you can connect to a
+    node with 
+    <screen>$ <userinput> qsub -I -lselect=126</userinput></screen>
+    And start the perl scripts directly. Another solution is to submit the
+    perl script(s) as a job. For example, with PBS, you can use the file (named
+    <filename>custom.batch</filename>):
+    <programlisting>
+#PBS -N pangolin
+#PBS -l select=126
+#PBS -o output_80lat.log
+#PBS -l walltime=00:45:00
+#PBS -j oe
+
+cd $PBS_O_WORKDIR
+perl t/functional_io_hdf5.t </programlisting>
+    and then submit it from the <filename>tests/</filename> directory with 
+    <screen>$ <userinput> qsub custom.batch</userinput></screen>
+    The output of the tests will be in <filename>output_80lat.log</filename> as
+    defined in the configuration file.
+  </para>
+ 
+  <warning>
+    Keep in mind the number of MPI processes you can
+    use on the machine. Some tests require a large number of processes and are
+    best suited for cluster nodes. 
+  </warning>
+
+  <sect1>
+    <title>
+      Unit tests
+    </title>
+    <sect2>
+      <title>
+        Description
+      </title>
+      <para>
+        Sequential unit tests check the partitioning is done properly. In particular, it
+        checks the cell neighbours, the subdomains neighbours and the subdomains ghost
+        cells.
+      </para>
+      <para>
+
+        Parallel unit tests try to send messages between the different cores to see if
+        communication is done properly.
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>
+        Running the tests
+      </title>
+      <para>
+        Unit tests are started with :
+        <screen>$ <userinput> perl tests_run.pl --unit </userinput></screen>
+        The output should be :
+        <screen>
+Sequential unit tests .. ok
+Parallel unit tests .... ok
+All tests successful.
+Files=2, Tests=408, 88 wallclock secs ( 0.44 usr  0.05 sys + 60.80 cusr  9.73
+csys = 71.02 CPU)
+Result: PASS</screen>
+        For more details, you can set the verbosity to 1 in <filename>tests_run.pl</filename>.
+      </para>
+      <para>
+        If you want to start only part of the tests use either:
+        <screen>$ <userinput> prove t/unit_sequential.t</userinput>
+$ <userinput> prove t/unit_parallel.t</userinput></screen>
+        It is also possible to use perl directly:
+        <screen>$ <userinput> perl t/unit_sequential.t</userinput>
+$ <userinput> perl t/unit_parallel.t</userinput></screen>
+      </para>
+      <para>
+        The number of partitions can be changes by editing the
+        correct test file. Setting <literal>n_min</literal> and
+        <literal>n_max</literal> will give you the number of partitions
+        (sequential) or processes (parallel). Beware, the number of partitions
+        must alway be 1 or a multiple of 3, except for 1 partition.
+
+        By default, parallel tests are aimed for a PC, so the limit is set at 24
+        processes.
+      </para>
+      <para>
+        Finally, you can disable parallel unit tests with the
+        <literal>--no-parallel</literal> flag:
+        <screen>$ <userinput> perl tests_run.pl --unit --no-parallel </userinput></screen>
+      </para>
+      <warning>
+        If you want to print debugging information in the code, the testing suite
+        might not work anymore.
+      </warning>
+    </sect2>
+ 
+  </sect1>
+
+  <sect1>
+    <title>
+      Functional tests
+    </title>
+    <sect2>
+      <title>
+        Description
+      </title>
+      <para>
+        Here, we run the complete model with different initial conditions.
+        Pangolin is run in the so-called Hourdin and Lauritzen configurations
+        (according to a paper written by these scientists) in parallel. The
+        output of the parallel version is compared to the output of the
+        sequential version. The parallel version is validated if the difference
+        is less than a given threshold (1e-12 typically).
+        This is done for several number of cores, up to the limit fixed in the test.
+      </para>
+      <para>
+        The I/O tests ensure that reading and writing HDF5 data is done
+        properly.  Pangolin is run with 0 iterations and we check the output
+        data is the same as the data in input. This supposes you have enable the
+        writing of ratio and both winds in the model. Otherwise, the tests will
+        be skipped.
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>
+        Running the tests
+      </title>
+      <para>
+        Functional tests can be started with:
+        <screen>$ <userinput> perl tests_run.pl --func</userinput></screen>
+      </para>
+      <para>
+        <warning> 
+          If you are using Pangolin with parallel I/O (HDF5), be very careful of
+          the filesystem you read and write from/on. For Neptune (CERFACS), this
+          means you must do your I/O on <filename>/scratch</filename> only as
+          <filename>/home</filename> does not support it. At best, the code will
+          be slow and may crash in the worst case.
+        </warning> 
+        <warning>
+          Please note that parallel simulations are run only if the output files
+          do not exist. Otherwise, the older version will be used in the
+          comparison to check the output.
+        </warning>
+      </para>
+
+      <para> 
+        A subset of the tests can be started manually with
+        <command>perl</command> or <command>prove</command> as before:
+        <screen>$ <userinput> perl t/functional_hourdin.t</userinput>
+$ <userinput> perl t/functional_lauritzen.t</userinput>
+$ <userinput> perl t/functional_io_hdf5.t</userinput></screen>
+
+        The first two tests will start a sequential and parallel advection for
+        comparison. Data is written in subfolders of
+        <filename>output_hourdin</filename> or
+        <filename>output_lauritzen</filename> or
+        <filename>output_hdf5</filename>. While you may specify the location for
+        input and output folders (see below), you will need the files shown in 
+        <xref linkend="tab-func_files"/>. We assume the HDF5 format, otherwise
+        the extension should be <filename>.dat</filename>. 
+        <table xml:id="tab-func_files">
+          <title>Files needed for functional tests</title>
+          <tgroup cols="4">
+            <thead>
+              <row>
+                <entry align="center">Nb lat</entry>
+                <entry align="center">I/O</entry>
+                <entry align="center">Hourdin</entry>
+                <entry align="center">Lauritzen</entry>
+              </row>
+            </thead>
+
+            <tbody>
+
+              <row>
+                <entry morerows='2'>80</entry>
+                <entry>ratio_1_201301010000.h5</entry>
+                <entry>ratio_1_201301010000.h5</entry>
+                <entry>ratio_1_201301010000.h5 </entry>
+              </row>
+              <row>
+                <entry>u_201301010000.h5</entry>
+                <entry>u_201301010000.h5</entry>
+                <entry>u_201301010000.h5 </entry>
+              </row>
+              <row>
+                <entry>v_201301010000.h5</entry>
+                <entry>v_201301010000.h5</entry>
+                <entry>v_201301010000.h5 </entry>
+              </row>
+
+              <row>
+                <entry morerows='2'>160</entry>
+                <entry>ratio_1_201301010000.h5</entry>
+              </row>
+              <row>
+                <entry>u_201301010000.h5</entry>
+              </row>
+              <row>
+                <entry>v_201301010000.h5</entry>
+              </row>
+
+              <row>
+                <entry morerows='2'>320</entry>
+                <entry>ratio_1_201301010000.h5</entry>
+              </row>
+              <row>
+                <entry>u_201301010000.h5</entry>
+              </row>
+              <row>
+                <entry>v_201301010000.h5</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+        <note>
+          We have added the winds as a requirement for the Lauritzen test case.
+          However, the current version of Pangolin still includes these winds
+          internally.
+        </note>
+      </para>
+      <para>
+        To set the different input and output folder is done by editing the
+        relevant section of the different <filename>.t</filename> files. Here is
+        an example setting the folder in the <filename>scratch</filename> on
+        Neptune:
+        <programlisting>
+my $folder = "/scratch/ae/praga/";
+ 
+my $ratio_in = $folder."input/gaussianhills_80lat/";
+my $winds_in = $folder."input/cv_winds/80lat/";
+my $folder_out = $folder."tests/output_hdf5";
+</programlisting>
+      </para>
+      <para>
+        The number of MPI processes can be set manually in the adequate
+        <filename>.t</filename> with:
+        <programlisting>
+$test->set_nmin($n_min);
+$test->set_nmax($n_max);</programlisting>
+        The number of tracers is 1 by default by default but can be changed with 
+        <programlisting> $test->set_nbtracers(1); </programlisting>
+      </para>
+      <para>
+        Do not forget to read the warning of at the beginning of the section
+        about the parallel requirements.  Finally, you can have more information
+        about the Perl module by generating a small documentation :
+        <screen>$ <userinput> perldoc Functional.pm </userinput></screen>
+      </para>
+    </sect2>
+    <sect2>
+      <title>
+        Cleaning
+      </title>
+      <para>
+        Functional tests generate a lot of data (around 3G for all I/O tests and
+        500M for the others) and a lot of log files, so do not forget to remove
+        the output files when you have finished. Logs can be cleaned with:
+      </para>
+    </sect2>
+  </sect1>
+</chapter>
+

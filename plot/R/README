@@ -1,0 +1,4 @@
+* 'make cv_rates' will plot 2 cv rate figures
+* 'make filaments' will plot 2 filaments
+* 'make' will do all of the above
+* 'make pdf SRC=lol.ps' will convert a postscript figure

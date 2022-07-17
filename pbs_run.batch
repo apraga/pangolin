@@ -1,0 +1,33 @@
+#PBS -N pangolin
+#PBS -l select=9
+#PBS -l walltime=01:40:00 
+#PBS -q debug
+#PBS -j oe
+
+cd $PBS_O_WORKDIR
+
+# If you need to, load modules or source files here
+nb_min=1
+nb_max=1
+
+# Remove hostname
+JOBID=`echo $PBS_JOBID | cut -d. -f1`
+
+# For Intel profiling
+#source /softs/intel/itac/8.1.1.027/bin/itacvars.sh
+#PROFILING="-genv VT_LOGFILE_FORMAT stfsingle -trace"
+
+
+nb_procs=$nb_min
+while [ $nb_procs -le $nb_max ]
+do
+  # One config file for each run
+  CONFIG=tmp/config_$nb_procs
+  OPTS=--config=$CONFIG
+
+
+  # Store log in an appropriate directory
+  mpirun -np $nb_procs $PROFILING bin/pangolin $OPTS &> log/output_$nb_procs.$JOBID
+
+  nb_procs=$(expr $nb_procs + 3)
+done

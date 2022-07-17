@@ -1,0 +1,70 @@
+! Configuration template for the simulation. Do not modify it !
+! Uncomment the parameters for changing the default value
+
+! Number of partitions (default is 2)
+! nb_partitions = 2
+
+! Starting time on the format YYYYMMDDHHMM
+! t_start = UNDEF 
+
+! Ending time on the format YYYYMMDDHHMM
+! t_end = UNDEF
+
+! Winds period on the format [DD[HH]]MM
+! If set to 0, winds are constant
+! T_winds = UNDEF
+
+! Period for output write period on the format [DD[HH]]MM
+! It must be > 0
+! T_output = UNDEF
+
+! Number of latitudes on each hemisphere (default is 90)
+! nb_lat2 = 90
+
+! Resolution at the Equator (lat x lon) in degrees.
+! Latitude (default is 1). You can set it to real : 1.3 for example
+! lat_res = 1
+
+! Longitude (default is 1)
+! lon_res = 1
+
+! Add chemical reactions : "yes" for activating (not implemented)
+! add_chemic = no
+
+! Advection time : zonal, meridional, 2d
+! advection = 2d
+
+! Input directory for ratio. Maximal size : 300 char.
+! All ratio must be in there, with the format : ratio_YYYYMMDDHHMM.dat
+! Contains path relative to simulation folder
+! input_dir = 
+
+! Input directory for winds. Maximal size : 300 char.
+! All winds must be in there, with the format : u_YYYYMMDDHHMM.dat or v_YYYYMMDDHHMM.dat 
+! Contains path relative to simulation folder
+! input_winds_dir = 
+
+! Used for analytical winds (testing)
+! test_case =
+
+! Output file for zonal winds. Maximal size : 300 char.
+! Contains path relative to simulation folder
+! Winds are named with the format : u_YYYYMMDDHHMM.dat
+! output_winds_dir = output
+
+! Output data directory. Default is ../output in the base directory
+! The output ratio file will be : ratio_YYYYMMDDHHMM.dat
+! output_dir = output
+
+! Timestep is set for analytical test cases with a CFL of 0.5
+! For numerical data, you must set it in minutes
+! dt = 0.
+
+! CFL if timestep is not defined
+! CFL = 0.7
+
+! Period for output
+! t_output = -9999999
+
+! Advection type
+! advection = 2d

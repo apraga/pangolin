@@ -1,0 +1,218 @@
+<chapter xml:id="requirements">
+  <title>Requirements</title>
+  <sect1>
+    <title>Mandatory</title>
+    <variablelist>
+      <varlistentry>
+        <term>Autotools</term>
+        <listitem>
+          <para>
+            Configuring the project is done with <application>autoconf</application>,
+            and <application>automake</application>. It configures the projects by
+            searching for the necessary dependencies and compiling source code.
+            <application>autoconf</application> should tell you if anything vital is
+            missing.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>MPI</term>
+        <listitem>
+          <para>
+            Most of the code is in Fortran and is compiled with an MPI script (for
+            example <command>mpif90</command>). A very small part is in C and is
+            compiled likewise (for examplewith a script <command>mpicc</command>).
+            This suppose you have a Fortran and C compiler which are needed for
+            testing purposes mostly. The MPI library should support the MPI2 standard. 
+          </para>
+          <para>
+            You should also be able to run parallel jobs. The code is configured for PBS
+            jobs, but you can also use <command>mpirun</command> and edit the batch file.
+          </para>
+          <warning>
+            <para>
+              Pangolin has been tested with <command>gfortran</command>,
+              <command>pgf90</command>, <command>ifort</command> for the Fortran
+              compiler and <application>MPICH</application>, <application>OpenMPI</application>, <application>Intel
+                MPI</application> for the MPI library. However, we do not claim to
+              support all implementations and all versions (even if it should
+              eventually).
+            </para>
+            <para>
+              We only guarantee at the moment the following configurations :
+              <table>
+                <title>MPI support</title>
+                <tgroup cols="5">
+                  <thead>
+                    <row>
+                      <entry>C</entry>
+                      <entry>Fortran</entry>
+                      <entry>MPI</entry>
+                      <entry>Architecture</entry>
+                      <entry>Machine</entry>
+                    </row>
+                  </thead>
+
+                  <tbody>
+                    <row>
+                      <entry>icc 13.1.0</entry>
+                      <entry>ifort</entry>
+                      <entry>IntelMPI 4.1.2</entry>
+                      <entry>amd64</entry>
+                      <entry>Neptune (CERFACS)</entry>
+                    </row>
+                    <row>
+                      <entry>gcc 4.5.1</entry>
+                      <entry>gfortran</entry>
+                      <entry>OpenMPI 1.4.3</entry>
+                      <entry>amd64</entry>
+                      <entry>Pannus (CERFACS, PC)</entry>
+                    </row>
+                    <row>
+                      <entry>gcc 4.7.2</entry>
+                      <entry>gfortran</entry>
+                      <entry>OpenMPI 1.4.5-1</entry>
+                      <entry>amd64</entry>
+                      <entry>Home PC</entry>
+                    </row>
+
+                  </tbody>
+                </tgroup>
+              </table>
+            </para>
+          </warning>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Perl</term>
+        <listitem>
+          <para> Needed to start the simulation (even though it can be done by
+            hand). It should be installed by default.  </para>
+        </listitem>
+      </varlistentry>
+
+
+      <varlistentry>
+        <term>HDF5</term>
+        <listitem>
+          <para>
+            An I/O format which allows for parallel I/O. Even though Pangolin can manage
+            ASCII data, it is the preferred I/O format.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1>
+    <title>Recommended</title>
+    <variablelist>
+      <varlistentry>
+        <term>Python 2.7+</term>
+        <listitem>
+          <para>
+            A script is available to generate analytical solution into ASCII or HDF5 format.
+            It can also be used to plot data with matplotlib and basemap (ASCII only).
+            This version is only compatible with Python 2.7+ but not Python 3.*.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>h5py</term>
+        <listitem>
+          <para>
+            A Python package to manage the HDF5 format easily.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Test::More</term>
+        <listitem>
+          <para>
+            A Perl module to run unit and functional tests shipped with Pangolin.
+            It can be installed with <command>cpan</command> or even better
+            <command>cpanm</command>. You can also use the version in the test
+            directory but it not recommanded.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Docbook</term>
+        <listitem>
+          <para>
+            Docbook is actually a format for writing documentation. This manual
+            was generated with Docbook XSL. For that, you will need the packages
+            <application>xsltproc</application>, <application>fop</application>
+            and <application>docbook-xsl</application>. For validating the
+            documentation, you may add <application>xmlstarlet</application>.
+          </para>
+          <para> This should take care of the latest Docbook, but it also
+            possible to generate documentation using
+            <application>Jade</application> and DSSL. This was not tested and
+            the XSL approach is recommended.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Doxygen</term>
+        <listitem>
+          <para>
+            The other half of this documentation is generated from the source
+            code with <application>Doxyegen</application>. It will document
+            everything you should need to know about the source code. 
+          </para>
+        </listitem>
+      </varlistentry>
+
+
+      <varlistentry>
+        <term>Basemap</term>
+        <listitem>
+          <para>
+            A python package to plot data on the sphere with a whole range of
+            projections. The scripts shipped with Pangolin only works for ASCII
+            data at the moment. You should get the latest version and install it
+            from source. Do not forget to install
+            <application>matplotlib</application> with it. 
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>NCL</term>
+        <listitem>
+          <para>
+            A plotting program used for publication-quality plotting. It can
+            manage HDF5 files.
+          </para>
+        </listitem>
+      </varlistentry>
+
+    </variablelist>
+
+  </sect1>
+
+  <sect1>
+    <title>Installation help</title>
+    <sect2>
+      <title>Perl testing suite</title>
+      Here, we will configure Perl to install packages without needing root privileges. 
+      All of our packages will be installed in <filename>~/perl5</filename> in this example.
+      First, we install the utility <command>cpanminus</command>:
+      <screen>$ <userinput>wget -O- http://cpanmin.us | perl - -l ~/perl5 App::cpanminus local::lib</userinput></screen>
+      Then we set the <command>local::lib</command> package to use
+      <filename>~/perl5</filename> from now on:
+      <screen>$ <userinput> eval `perl -I ~/perl5/lib/perl5 -Mlocal::lib`</userinput></screen>
+      This can be put in <filename>.bash_profile</filename> (or the equivalent
+      for your shell) for future sessions:
+      <screen>$ <userinput>echo 'perl -I ~/perl5/lib/perl5 -Mlocal::lib'>> ~/.profile</userinput></screen>
+      Now we can install any package easily. For Pangolin, you want <command>Test::More</command>:
+      <screen>$ <userinput>cpanm Test::More</userinput></screen>
+    </sect2>
+  </sect1>
+</chapter>

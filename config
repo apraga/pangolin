@@ -1,0 +1,18 @@
+nb_partitions = 9
+nb_lat2 = 80
+t_start = 201301010000
+t_end =   201301010100
+dt=20.
+T_winds =  130000
+T_output = 130000
+
+output_dir = ouput
+output_winds_dir = output
+!output_dir = /scratch/ae/praga/tmp
+!output_winds_dir = /scratch/ae/praga/tmp
+test_case = testsuite_cv
+
+input_dir = input
+input_winds_dir = input
+!input_dir = /scratch/ae/praga/input/gaussianhills_80lat
+!input_winds_dir = /scratch/ae/praga/input/cv_winds

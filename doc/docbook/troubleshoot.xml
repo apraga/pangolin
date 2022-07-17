@@ -1,0 +1,303 @@
+<chapter xml:id="troubleshoot">
+  <title>
+    Troubleshoot
+  </title>
+  <para>
+    Here is a list of some common errors at the different steps and their possible
+    solutions.
+  </para>
+  <sect1>
+    <title>
+      Configuration issues
+    </title>
+
+    <qandaset>
+      <qandaentry>
+        <question>
+          <para> configure: error: No Fortran compiler found </para>
+        </question>
+        <answer>
+          <para> The configure script will try to find a fortran compiler in your PATH. So you
+            need to either update it, or specify directly the directory with :
+            <screen>$ <userinput> ./configure MPI_DIRECTORY=/usr/local/openmpi143/bin/</userinput></screen>
+          </para>
+        </answer>
+      </qandaentry>
+
+      <qandaentry>
+        <question>
+          <para> configure: error: Fortran compiler cannot create executables </para>
+        </question>
+        <answer>
+          <para> 
+            You need to add the correct path for the MPI static library issue. The configure
+            script will give you what is has found. Example :
+            <screen>searching MPI compiler PGF .../usr/local/openmpi143/bin/mpif90</screen>
+            You can use <literal>LD_LIBRARY_PATH</literal> for that. On Bash :
+            <screen>$ <userinput>export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/openmpi143/lib </userinput></screen> 
+          </para> 
+          <para> 
+            This is a temporary fix. Here are the normal ways to do that on Linux :
+            <itemizedlist>
+              <listitem> Create a symlink to a directory listed in <filename>/etc/ld.so.conf</filename> </listitem> 
+              <listitem> Copy the library to a directory listed in this file </listitem> 
+              <listitem> Edit this file to add the directory containing the library </listitem> 
+            </itemizedlist>
+          </para> 
+          <para>
+            If everything else fails, you can specify the compiler with the FC flags:
+            <screen>$ <userinput>$ ./configure FC=/mypath/mycompiler</userinput></screen> 
+          </para>
+        </answer>
+      </qandaentry>
+
+      <qandaentry>
+        <question>
+          <para>configure: WARNING: HDF5 is not parallel </para>
+        </question>
+        <answer>
+          <para> 
+            This probably means you did not enable the parallel version in your HDF5
+            installation. See <xref linkend="hdf5_config"/>. 
+
+            Otherwise, it means the script fails to detect the parallel
+            features. Here is how it works: it searchs for 
+            <literal>define HAVE_PARALLEL 1</literal> in the header files. It is
+            most likely the include path is not correct then. You can add more
+            include path with:
+
+            <screen> $ <userinput> ./configure HDF5_FLAGS=" -I/yourincludepath"</userinput></screen>
+          </para>
+        </answer>
+      </qandaentry>
+
+      <qandaentry>
+        <question>
+          <para>configure: error: Could not compile and link with HDF5 </para>
+        </question>
+        <answer>
+          <para> 
+            HDF5 is the default and must be installed. Please check
+            <xref linkend="hdf5_config"/>.
+          </para>
+        </answer>
+      </qandaentry>
+
+      <qandaentry>
+        <question>
+          <para>configure: error: Could not compile and link with parallel HDF5 </para>
+        </question>
+        <answer>
+          <para> 
+            You have HDF5 installed but a conflict between the fortran module files and the
+            install.
+          </para>
+        </answer>
+      </qandaentry>
+    </qandaset>
+
+  </sect1>
+  <sect1>
+    <title>
+      Compilation issues
+    </title>
+
+    <qandaset>
+      <qandaentry>
+        <question>
+          <para> undefined reference to 'mpi_get_address_' </para>
+        </question>
+        <answer>
+          <para> 
+            Try a <command>make clean</command>. Otherwise, check your MPI implementation.
+          </para>
+        </answer>
+      </qandaentry>
+
+      <qandaentry>
+        <question>
+          <para> Fatal Error: Can't open module file 'configuration_class.mod' </para>
+        </question>
+        <answer>
+          <para> 
+            Fortran module dependencies are not well integrated with Automake and managed by
+            our code. For the moment, try a <command>make clean</command> and recompile.
+          </para>
+        </answer>
+      </qandaentry>
+
+      <qandaentry>
+        <question>
+          <para> undefined reference to 'mpi_get_address_' </para>
+        </question>
+        <answer>
+          <para> 
+            Try a <command>make clean</command>. Otherwise, check your MPI implementation.
+          </para>
+        </answer>
+      </qandaentry>
+
+      <qandaentry>
+        <question>
+          <para> partitioning_class.F90: undefined reference to h5pset_fapl_mpio_f_ </para>
+        </question>
+        <answer>
+          <para> 
+            This happens when you try to use a parallel HDF5 version but the linker fails to
+            find the propery librairy. In practice, it may mean you are using the wrong
+            <filename>hdf5.mod</filename>.
+          </para> 
+          <para> 
+            Look at the compilation flags to find the include directory, and
+            search for <filename>hdf5.mod</filename> in them. Then check it
+            really contains <literal>h5pset_fapl_mpio_</literal>. Then you can
+            set <literal>HDF5_DIR</literal> and <literal>HDF5_FLAGS</literal> as
+            explained in <xref linkend="hdf5_config"/>.
+          </para>
+        </answer>
+      </qandaentry>
+    </qandaset>
+
+  </sect1>
+
+  <sect1>
+    <title>
+      Run issues
+    </title>
+
+    <qandaset>
+      <qandaentry>
+        <question>
+          <para> Can't exec "/usr/lib64/openmpi/bin/mpirun": No such file or directory </para>
+        </question>
+        <answer>
+          <para> You probably did not do a <command>make install</command>.  </para> 
+        </answer>
+      </qandaentry>
+
+      <qandaentry>
+        <question>
+          <para> error while loading shared libraries: libmpichf90.so.1.2:
+            cannot open shared object file: No such file or directory </para>
+        </question>
+        <answer>
+          <para> The executable was linked with the wrong library. Try a <command>make
+              clean &amp;&amp; make</command>.  </para>
+        </answer>
+      </qandaentry>
+
+      <qandaentry>
+        <question>
+          <para> I compiled Pangolin but my modifications are not taken into
+            account !  </para>
+        </question>
+        <answer>
+          <para> 
+            By default, the executable is in <filename>src/</filename>, so you
+            have to do a <command>make install</command> to put the new version
+            in <filename>bin/</filename>.
+          </para>
+        </answer>
+      </qandaentry>
+    </qandaset>
+
+  </sect1>
+
+  <sect1>
+    <title>
+      Other issues
+    </title>
+
+    <sect2>
+      <title>
+        Data generation issues
+      </title>
+
+      <qandaset>
+        <qandaentry>
+          <question>
+            <para>
+              SyntaxError in generate/pangolingrid.py
+            </para>
+          </question>
+          <answer>
+            <para>
+              If you have a message similar to :
+              <programlisting>
+File "/home/alex/phd/pangolin/generate/pangolingrid.py", line 819
+print "No winds for random"
+^
+SyntaxError: invalid syntax</programlisting>
+              then you are using Python 3. This version of Pangolin is only
+              compatible with Python 2.7+ at the moment.
+            </para>
+          </answer>
+        </qandaentry>
+      </qandaset>
+    </sect2>
+
+    <sect2>
+      <title>
+        Documentation issues
+      </title>
+
+      <qandaset>
+        <qandaentry>
+          <question>
+            <para>
+              xsl:import : unable to load
+              /usr/share/xml/docbook/stylesheet/docbook-xsl/html/chunk.xsl
+            </para>
+          </question>
+          <answer>
+            <para> 
+              The location of the stylesheet for docbook is not correct.  First,
+              locate the folder for the stylesheet file
+              <filename>html/chunk.xsl</filename> with: 
+              <screen>$ <userinput>locate html/chunk.xsl</userinput>
+/usr/share/xml/docbook/stylesheet/docbook-xsl/html/chunk.xsl</screen>
+              Then modify the folling line in
+              <filename>doc/docbook/Makefile</filename> to the location you found:
+              <programlisting>LOC_HTML=/usr/share/xml/docbook/stylesheet/docbook-xsl/html/chunk.xsl </programlisting> 
+            </para>
+          </answer>
+        </qandaentry>
+      </qandaset>
+    </sect2>
+
+    <sect2>
+      <title>
+        Testing issues
+      </title>
+      <qandaset>
+        <qandaentry>
+          <question>
+            <para>Bailout called.  Further testing stopped:  Backtrace for this error: </para>
+          </question>
+          <answer>
+            <para> 
+              If you have something like :
+              <programlisting>
+Running tests from 1 to 12
+ok 1 - Checking west to east advection (1 partition(s))
+Bailout called.  Further testing stopped:  Backtrace for this error:
+Bail out!  Backtrace for this error:
+# Child (Nb partitions = 1) exited without calling finalize()
+
+#   Failed test 'Nb partitions = 1'
+#   at /space/praga/perl/lib/perl5/Test/Builder.pm line
+#   1212.
+# Tests were run but no plan was declared and
+# done_testing() was not seen.
+                FAILED--Further testing stopped: Backtrace for this error:
+              </programlisting>
+              send a bug report to the maintainer.
+            </para>
+          </answer>
+        </qandaentry>
+      </qandaset>
+    </sect2>
+
+  </sect1>
+</chapter>
+

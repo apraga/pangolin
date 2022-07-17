@@ -1,0 +1,12 @@
+#PBS -N pangolin
+#PBS -l select=126
+#PBS -o output_all.log
+#PBS -l walltime=00:50:00 
+#PBS -l place=free:shared
+#PBS -j oe
+
+
+cd $PBS_O_WORKDIR
+perl t/functional_lauritzen.t
+perl t/functional_io_hdf5.t
+perl t/functional_hourdin.t

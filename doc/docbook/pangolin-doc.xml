@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book [
+<!ENTITY quickstart SYSTEM "quickstart.xml">
+<!ENTITY requirements SYSTEM "requirements.xml">
+<!ENTITY config SYSTEM "configuration.xml">
+<!ENTITY run SYSTEM "run.xml">
+<!ENTITY troubleshoot SYSTEM "troubleshoot.xml">
+<!ENTITY preprocess SYSTEM "preprocessing.xml">
+<!ENTITY postprocess SYSTEM "postprocessing.xml">
+<!ENTITY tests SYSTEM "tests.xml">
+<!ENTITY documentation SYSTEM "documentation.xml">
+]>
+<book>
+  <title>Pangolin manual</title>
+  <info>
+    <copyright>
+      <year>2011-2014</year>
+      <holder>CERFACS</holder>
+    </copyright>
+    <author>
+      <personname>
+        <firstname>Alexis </firstname>
+        <surname> Praga </surname>
+      </personname>
+    </author>
+    <edition> v0.2 </edition>
+    <pubdate> June 2014 </pubdate>
+
+    <abstract>
+      <para> 
+        This is the user manual for Pangolin explaining how to configure the
+        model, use it and troubleshoot it. 
+      </para>
+      <para>
+        Source code documentation is available in <xref linkend="doxygen_doc"/>.
+      </para>
+    </abstract>
+
+  </info>
+
+  <toc/>
+  &quickstart;
+  &requirements;
+  &config;
+  &run;
+  &troubleshoot;
+  &preprocess;
+  &postprocess;
+  &tests;
+  &documentation;
+</book>

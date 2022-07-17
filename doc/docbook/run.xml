@@ -1,0 +1,161 @@
+<chapter xml:id="run">
+  <title>Running Pangolin</title>
+
+  <sect1 xml:id="config_file">          
+    <title>
+      Configuration file
+    </title>
+
+    <para>
+      Copy the template <filename>config.template</filename> to another file
+      (the default is <filename>config</filename>). Edit it following the
+      information given in the comments (a comment beging with !).
+    </para>
+    <para>
+      As an example, we show here a small config file :
+      <programlisting>nb_partitions = 27
+nb_lat2 = 5
+t_start = 201301010000
+t_end =   201301020000
+dt=5.
+T_winds =  0100
+T_output = 0100
+
+output_dir = output
+output_winds_dir = output
+test_case = testsuite_cv
+
+input_dir = input
+input_winds_dir = input </programlisting>
+      Here, we set the model with 27 MPI processes, which should be run with 27
+      cores to have true parallelism. The number of latitude on the grid is 10
+      (twice <literal>nb_lat2</literal>). The simulation is set to run for two
+      whole days, with a time step of 5 minutes.  Winds are read every hour and
+      data is written every hour. Ratio and winds have different input and
+      output folders for more flexibility. Finally, we use winds implemented in
+      the model for debug purposes with:
+      <programlisting> test_case = testsuite_cv </programlisting>
+
+    </para>
+  </sect1>
+
+  <sect1>
+    <title>
+      How to run
+    </title>
+    <sect2>
+      <title>
+        Quickstart
+      </title>
+
+    <para>
+      Start the script simulation_run and follow the instructions. You can specify the
+      number of processus (which should the number of partitions). Here is
+      an example run:
+
+      <screen>$ <userinput>./simulation_run.pl</userinput>
+        Enter the number of processus:
+        Number of partitions (start):
+        3
+        Number of partitions (end):
+        9 </screen>
+    </para>
+    <para>
+      You can directly override the number of processus for several runs or a single one:
+      <screen>$ <userinput>./simulation_run.pl --start=3 --end=9</userinput>
+$ <userinput>./simulation_run.pl --startend=126</userinput></screen>
+    </para>
+    <para>
+      Here is the result of a sample run:
+
+<screen>Simulation
+b partitions = 3
+logfilepangolin.log_4906
+Warning : Analytical case (for debug)
+Warning : CFL set from timestep
+Nb processes =       3
+Nb partitions =       3
+* Reading configuration file config.new done
+* Initializing simulation done
+New global grid with           80 latitudes on an hemisphere
+Three partitions
+Numerical ratio (always)
+Reading ratio (sequential)/wkdir/pae2/praga/input/gaussianhills_80lat/ratio_1_201301010000.h5
+Analytical winds
+ skipping merid winds check (partition_class)
+* Partitioning done
+* Starting simulation...
+Run from 2013/01/01 00:00 to 2013/01/13 00:00
+Duration    12.000 days(nb iter=    864, dt=  20.00min, CFL=   0.95605)
+* Simulation done
+* Cleaning...
+</screen>
+    </para>
+
+    </sect2>
+
+    <sect2>
+      <title>
+        Customization
+      </title>
+      <para>
+        You can start the executable by hand with:
+        <screen>$ <userinput>mpirun -np 9 bin/pangolin</userinput></screen>
+        By default, <filename>config</filename> is the configuration file
+        but this can be changed with:
+        <screen>$ <userinput>mpirun -np 9 bin/pangolin --config=other.config</userinput></screen>
+      </para>
+      <para>
+        Starting jobs is done with a PBS script
+        <filename>pbs_run.batch</filename>. You must edit it in order to specify
+        the running time.  Also, you can add you own specifications in it
+        (sourcing files, loading modules...).
+      </para>
+    </sect2>
+
+    <sect2>
+      <title>
+        Remarks
+      </title>
+      <sect3>
+        <title>
+          Timesteps
+        </title>
+        <para>
+          In the configuration file, the different timesteps are given in minutes.
+          However, in the code, we only deal with times in seconds (possible overflow for
+          large simulations ?).
+        </para>
+      </sect3>
+
+      <sect3>
+        <title>
+          I/O
+        </title>
+        <para>
+          The simulation needs only a starting and ending time given in the format
+          YYYYMMDDHHMM. The period is on the form HHMM.
+          It will deduce the needed running time and the number of
+          iterations according to the timestep. But it will not check every data file is
+          here. So a missing file will only be found when needed.
+        </para>
+      </sect3>
+
+      <sect3>
+        <title>
+          Winds
+        </title>
+        <para>
+          <itemizedlist>
+            <listitem> Winds are interpolated linearly.  </listitem>
+            <listitem>In input, winds are positive if they point towards the north. However, the
+              correction will change the sign for the model : positive will thus mean toward
+              the south. </listitem>
+            <listitem> They must be given in m/s on the Earth. The model will convert them in
+              degree/s.  </listitem>
+          </itemizedlist>
+        </para>
+      </sect3>
+    </sect2>
+  </sect1>
+</chapter>

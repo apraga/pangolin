@@ -1,0 +1,19 @@
+#PBS -N pandar
+#PBS -l select=12
+#PBS -m ae -M praga@cerfacs.fr
+#PBS -o tests/log/output_2_to_12.log
+#PBS -l walltime=00:10:00 
+#PBS -j oe
+
+cd $PBS_O_WORKDIR
+nb_procs_min=3
+nb_procs_max=12
+
+nb_procs=$nb_procs_min
+while [ $nb_procs -le $nb_procs_max ]; do
+  # One config file for each run
+  OPTS=--config=tmp/config$nb_procs
+
+  mpirun -np $nb_procs tests/parallel/tests_parallel $OPTS >& tests/log/output_$nb_procs.log
+  nb_procs=$(($nb_procs+3))
+done

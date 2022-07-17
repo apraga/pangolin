@@ -1,0 +1,110 @@
+<chapter xml:id="preprocess">
+  <title>
+    Preprocessing
+  </title>
+  <sect1>
+    <title>
+      Generating analytical data 
+    </title>
+
+    <sect2>
+      <title>
+        Quickstart
+      </title>
+      <para>
+        In the <filename>generate</filename> folder, you will find a Python script
+        which can already generate data. Start it with 
+        <screen>$ <userinput>make exec</userinput></screen>
+        You can look into the files or see <link linkend="using_module">the next
+          section</link> for more info about the Python module.
+      </para>
+    </sect2>
+
+    <sect2 xml:id="using_module">
+      <title>
+        Using the Python module
+      </title>
+
+      <para>
+        A Python module <filename>pangolinGrid</filename>, in the
+        <filename>processing</filename> folder, is there to help you with that.
+        You can use it to generate concentration and winds data files, or to
+        correct the winds for a 2D null divergence. Of course, you can also add
+        your own methods, as the basics are there.
+      </para>
+      <para>
+        Start by importing the classes and creating an instance:
+        <programlisting>
+from pangolingrid import PangolinGrid, AnalyticalCase
+
+g = PangolinGrid() </programlisting>
+        Then you can generate data by setting the number of total latitudes on the grid.
+        It must be an even number. Then call the adequate functions for generating the
+        data :
+        <programlisting>
+g.init(180)
+test = AnalyticalCase("solid_rot")
+g.generate_ratio("ratio_0.dat", test)
+g.generate_u("u.dat", test)
+g.generate_v("v.dat", test) </programlisting>
+        The grid can also be initialized from a concentration file :
+        <programlisting>
+g.init_from_file("ratio_0.dat") </programlisting>
+        Then you can correct the winds and generate new files :
+        <programlisting>
+g.correct_winds("u.dat", "u_corr.dat", "v.dat", "v_corr.dat") </programlisting>
+        So, for generating ratio and (corrected) winds, it should be similar to this :
+        <programlisting>
+from pangolingrid import PangolinGrid, AnalyticalCase
+
+cell_format = "center"
+g = PangolinGrid(cell_format)
+
+generate = True
+correct = True
+case = "solid_rot"
+
+if (generate):
+g.init(180) #Total number of latitudes
+test = AnalyticalCase(case)
+
+g.generate_ratio("ratio_0.dat", test)
+g.generate_u("u.dat", test)
+g.generate_v("v.dat", test)
+
+if (correct):
+g.init_from_file("ratio_0.dat")
+g.correct_winds("u.dat", "u_corr.dat", "v.dat", "v_corr.dat") </programlisting>
+      </para>
+      <para>
+        For the test in Hourdin's paper, we can also generate an analytical solution. If
+        the generation part of the script, we must add the final time. For a complete
+        rotation of a particle at (lat=pi/4,lon=0), we use a time of 68008 :
+        <programlisting>
+if (generate):
+g.init(180) #Total number of latitudes
+test = AnalyticalCase(case)
+
+test.update_t(68008)
+g.generate_ratio("ratio_anal_807.dat", test) </programlisting>
+
+        Finally, you can look up code documentation included in the module with :
+        <screen>$ <userinput>pydoc processing/pangolingrid.py</userinput></screen>
+      </para>
+
+    </sect2>
+
+    <sect2 xml:id="module_notes">
+      <title>
+        Some information about the data
+      </title>
+      <para>
+        Please note the model needs divergence-free winds. Also, the winds
+        defined in <filename>pangolingrid.py</filename> are set in m/s but the
+        final winds outputed by the script and read by Pangolin are in degree/s.
+      </para>
+    </sect2>
+
+ 
+  </sect1>
+</chapter>
