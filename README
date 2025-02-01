@@ -1,0 +1,23 @@
+PANGOLIN is a PArallel implementatioN of a larGe scale three-dimensiOnaL
+chemIstry-traNsport scheme developped by Alexis Praga.
+
+Copyright 2012, CERFACS.  All rights reserved. See the LICENSE file.
+
+Structure
+=========
+
+* generate : script for generating initial conditions
+* log : temporary folders for log files
+* m4 : custiom functions for autoconf
+* plot : all plotting scripts (R, python, ncl...)
+* prototype : old Matlab version
+* src : source code
+* tests : unit and functional tests
+
+Publication
+===========
+-  Alexis Praga, Daniel Cariolle, Luc Giraud. Pangolin v1.0, a conservative 2-D advection model towards large-scale parallel calculation. Geoscientific Model Development, 2015, 8, pp.205 - 220. ⟨10.5194/gmd-8-205-2015⟩. ⟨hal-01117048⟩
+-  Alexis Praga. A large-scale atmospheric chemistry-transport model for massively parallel architectures. Computer Science [cs]. Université Toulouse III - Paul Sabatier, 2015. English. ⟨NNT : ⟩. ⟨tel-01178394⟩Contact
+
+======
+Alexis Praga (alexis@praga.dev)

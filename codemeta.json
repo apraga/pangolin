@@ -1,0 +1,42 @@
+{
+    "@context": "https://w3id.org/codemeta/3.0",
+    "type": "SoftwareSourceCode",
+    "applicationCategory": "Weather forecast",
+    "author": [
+        {
+            "id": "https://orcid.org/0000-0002-4540-8371",
+            "type": "Person",
+            "email": "alexis@praga.dev",
+            "familyName": "Praga",
+            "givenName": "Aleis"
+        },
+        {
+            "type": "Role",
+            "schema:author": "https://orcid.org/0000-0002-4540-8371"
+        },
+        {
+            "id": "_:author_2",
+            "type": "Person",
+            "familyName": "Cariolle",
+            "givenName": "Daniel"
+        },
+        {
+            "id": "https://orcid.org/0000-0002-7062-7672",
+            "type": "Person",
+            "familyName": "Giraud",
+            "givenName": "Luc"
+        }
+    ],
+    "codeRepository": "https://github.com/apraga/pangolin",
+    "dateCreated": "2015-01-01",
+    "datePublished": "2015-01-01",
+    "description": "A large-scale atmospheric chemistry-transport model for massively parallel architectures",
+    "funder": {
+        "type": "Organization",
+        "name": "Cerfacs, Meteo-France"
+    },
+    "name": "Pangolin",
+    "programmingLanguage": "Fortran",
+    "version": "1.0.0",
+    "referencePublication": "https://doi.org/10.5194/gmd-8-205-2015"
+}
